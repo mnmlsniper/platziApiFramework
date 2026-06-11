@@ -1,0 +1,28 @@
+{
+  "name": "platziapiframework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:auth": "npx playwright test tests/auth.spec.js",
+    "test:products": "npx playwright test tests/products.spec.js",
+    "test:categories": "npx playwright test tests/categories.spec.js",
+    "report": "npx playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mnmlsniper/platziApiFramework.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/mnmlsniper/platziApiFramework/issues"
+  },
+  "homepage": "https://github.com/mnmlsniper/platziApiFramework#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  }
+}
