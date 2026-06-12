@@ -1,5 +1,6 @@
 import { test } from '../src/helpers/fixtures/fixture.js';
 import { expect } from '@playwright/test';
+import { readTokens } from '../src/helpers/read-tokens.js';
 
 const ADMIN = { email: 'admin@mail.com', password: 'admin123' };
 
@@ -18,10 +19,8 @@ test.describe('Auth', () => {
     expect(response.status()).toBe(401);
   });
 
-  test('get profile with valid token', async ({ api }) => {
-    const loginRes = await api.auth.login(ADMIN.email, ADMIN.password);
-    const { access_token } = await loginRes.json();
-
+  test('get profile with valid token — admin', async ({ api }) => {
+    const { access_token } = readTokens('admin');
     const profileRes = await api.auth.getProfile(access_token);
     const profile = await profileRes.json();
 
@@ -29,7 +28,7 @@ test.describe('Auth', () => {
     expect(profile.role).toBe('admin');
   });
 
-  test('get profile without token returns 401', async ({ api }) => {
+  test('guest cannot access profile — 401', async ({ api }) => {
     const response = await api.unauthorized().auth.getProfile('');
 
     expect(response.status()).toBe(401);

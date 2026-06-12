@@ -4,7 +4,18 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const TOKEN_PATH = path.join(__dirname, '../.auth/token.json');
+const AUTH_DIR = path.join(__dirname, '../.auth');
+
+const ROLES = {
+  admin: {
+    email: process.env.ADMIN_EMAIL || 'admin@mail.com',
+    password: process.env.ADMIN_PASSWORD || 'admin123',
+  },
+  customer: {
+    email: process.env.CUSTOMER_EMAIL || 'customer@test.com',
+    password: process.env.CUSTOMER_PASSWORD || 'customer123',
+  },
+};
 
 export default async function globalSetup(config) {
   const { baseURL } = config.projects[0].use;
@@ -13,21 +24,18 @@ export default async function globalSetup(config) {
   const context = await browser.newContext();
   const request = context.request;
 
-  const response = await request.post(`${baseURL}auth/login`, {
-    data: {
-      email: process.env.ADMIN_EMAIL || 'admin@mail.com',
-      password: process.env.ADMIN_PASSWORD || 'admin123',
-    },
-  });
+  fs.mkdirSync(AUTH_DIR, { recursive: true });
 
-  if (!response.ok()) {
-    throw new Error(`Global setup: login failed with status ${response.status()}`);
+  for (const [role, credentials] of Object.entries(ROLES)) {
+    const response = await request.post(`${baseURL}auth/login`, { data: credentials });
+
+    if (!response.ok()) {
+      throw new Error(`Global setup: login failed for role "${role}" — status ${response.status()}`);
+    }
+
+    const tokens = await response.json();
+    fs.writeFileSync(path.join(AUTH_DIR, `${role}.json`), JSON.stringify(tokens));
   }
-
-  const { access_token, refresh_token } = await response.json();
-
-  fs.mkdirSync(path.dirname(TOKEN_PATH), { recursive: true });
-  fs.writeFileSync(TOKEN_PATH, JSON.stringify({ access_token, refresh_token }));
 
   await browser.close();
 }

@@ -22,15 +22,17 @@ test.describe('Categories', () => {
   });
 
   test('CRUD: create → update → delete category', async ({ api }) => {
-    const { body: category } = await api.categories.create({
+    const { body: category } = await api.as('admin').categories.create({
       name: 'Test Category',
       image: 'https://placeimg.com/640/480/any',
     });
     expect(category.id).toBeDefined();
 
-    const { body: updated } = await api.categories.update(category.id, { name: 'Updated Category' });
+    const { body: updated } = await api.as('admin').categories.update(category.id, {
+      name: 'Updated Category',
+    });
     expect(updated.name).toBe('Updated Category');
 
-    await api.categories.delete(category.id);
+    await api.as('admin').categories.delete(category.id);
   });
 });

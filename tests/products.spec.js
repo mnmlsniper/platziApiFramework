@@ -23,7 +23,7 @@ test.describe('Products', () => {
   });
 
   test('CRUD: create → update → delete', async ({ api }) => {
-    const { body: product } = await api.products.create({
+    const { body: product } = await api.as('admin').products.create({
       title: `Framework Test ${Date.now()}`,
       price: 99,
       description: 'Created by Playwright framework',
@@ -32,7 +32,7 @@ test.describe('Products', () => {
     });
     expect(product.id).toBeDefined();
 
-    const { body: updated } = await api.products.update(product.id, {
+    const { body: updated } = await api.as('admin').products.update(product.id, {
       title: 'Updated Title',
       price: 150,
       description: 'Updated by Playwright framework',
@@ -40,7 +40,7 @@ test.describe('Products', () => {
     });
     expect(updated.title).toBe('Updated Title');
 
-    await api.products.delete(product.id);
+    await api.as('admin').products.delete(product.id);
   });
 
   test('filter products by price range', async ({ api }) => {
