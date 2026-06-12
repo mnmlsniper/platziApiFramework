@@ -1,4 +1,5 @@
 import { validate } from '../validator.js';
+import { parseBody } from '../parse-body.js';
 
 export class CategoriesService {
   constructor({ request, token }) {
@@ -8,14 +9,14 @@ export class CategoriesService {
 
   async getAll() {
     const response = await this.request.get('categories');
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getCategories', response.status(), body);
     return { status: response.status(), body };
   }
 
   async getById(id) {
     const response = await this.request.get(`categories/${id}`);
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getCategoryById', response.status(), body);
     return { status: response.status(), body };
   }
@@ -25,7 +26,7 @@ export class CategoriesService {
       data,
       headers: { Authorization: `Bearer ${this.token}` },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('createCategory', response.status(), body);
     return { status: response.status(), body };
   }
@@ -35,7 +36,7 @@ export class CategoriesService {
       data,
       headers: { Authorization: `Bearer ${this.token}` },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('updateCategory', response.status(), body);
     return { status: response.status(), body };
   }
@@ -44,13 +45,13 @@ export class CategoriesService {
     const response = await this.request.delete(`categories/${id}`, {
       headers: { Authorization: `Bearer ${this.token}` },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     return { status: response.status(), body };
   }
 
   async getProductsByCategory(id) {
     const response = await this.request.get(`categories/${id}/products`);
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getProductsByCategory', response.status(), body);
     return { status: response.status(), body };
   }

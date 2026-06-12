@@ -1,4 +1,5 @@
 import { validate } from '../validator.js';
+import { parseBody } from '../parse-body.js';
 
 export class ProductsService {
   constructor({ request, token }) {
@@ -10,14 +11,14 @@ export class ProductsService {
     const query = new URLSearchParams(params).toString();
     const url = query ? `products?${query}` : 'products';
     const response = await this.request.get(url);
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getProducts', response.status(), body);
     return { status: response.status(), body };
   }
 
   async getById(id) {
     const response = await this.request.get(`products/${id}`);
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getProductById', response.status(), body);
     return { status: response.status(), body };
   }
@@ -27,7 +28,7 @@ export class ProductsService {
       data,
       headers: { Authorization: `Bearer ${this.token}` },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('createProduct', response.status(), body);
     return { status: response.status(), body };
   }
@@ -37,7 +38,7 @@ export class ProductsService {
       data,
       headers: { Authorization: `Bearer ${this.token}` },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('updateProduct', response.status(), body);
     return { status: response.status(), body };
   }
@@ -46,20 +47,20 @@ export class ProductsService {
     const response = await this.request.delete(`products/${id}`, {
       headers: { Authorization: `Bearer ${this.token}` },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     return { status: response.status(), body };
   }
 
   async filterByTitle(title) {
     const response = await this.request.get(`products/?title=${title}`);
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getProducts', response.status(), body);
     return { status: response.status(), body };
   }
 
   async filterByPriceRange(min, max) {
     const response = await this.request.get(`products/?price_min=${min}&price_max=${max}`);
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getProducts', response.status(), body);
     return { status: response.status(), body };
   }

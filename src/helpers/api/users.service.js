@@ -1,4 +1,5 @@
 import { validate } from '../validator.js';
+import { parseBody } from '../parse-body.js';
 
 export class UsersService {
   constructor({ request, token }) {
@@ -8,21 +9,21 @@ export class UsersService {
 
   async getAll() {
     const response = await this.request.get('users');
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) body.forEach((u) => validate('User', u));
     return { status: response.status(), body };
   }
 
   async getById(id) {
     const response = await this.request.get(`users/${id}`);
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('getUserById', response.status(), body);
     return { status: response.status(), body };
   }
 
   async create(data) {
     const response = await this.request.post('users', { data });
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('createUser', response.status(), body);
     return { status: response.status(), body };
   }
@@ -32,7 +33,7 @@ export class UsersService {
       data,
       headers: { Authorization: `Bearer ${this.token}` },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     if (response.ok()) validate('updateUser', response.status(), body);
     return { status: response.status(), body };
   }
@@ -41,7 +42,7 @@ export class UsersService {
     const response = await this.request.post('users/is-available', {
       data: { email },
     });
-    const body = await response.json();
+    const body = await parseBody(response);
     return { status: response.status(), body };
   }
 }
