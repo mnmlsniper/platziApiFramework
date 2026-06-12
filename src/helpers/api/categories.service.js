@@ -10,14 +10,14 @@ export class CategoriesService {
     const response = await this.request.get('categories');
     const body = await response.json();
     if (response.ok()) validate('getCategories', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async getById(id) {
     const response = await this.request.get(`categories/${id}`);
     const body = await response.json();
     if (response.ok()) validate('getCategoryById', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async create(data) {
@@ -27,7 +27,7 @@ export class CategoriesService {
     });
     const body = await response.json();
     if (response.ok()) validate('createCategory', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async update(id, data) {
@@ -37,7 +37,7 @@ export class CategoriesService {
     });
     const body = await response.json();
     if (response.ok()) validate('updateCategory', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async delete(id) {
@@ -45,13 +45,13 @@ export class CategoriesService {
       headers: { Authorization: `Bearer ${this.token}` },
     });
     const body = await response.json();
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async getProductsByCategory(id) {
     const response = await this.request.get(`categories/${id}/products`);
     const body = await response.json();
     if (response.ok()) validate('getProductsByCategory', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 }

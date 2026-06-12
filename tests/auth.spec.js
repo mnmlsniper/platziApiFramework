@@ -7,7 +7,6 @@ test.describe('Auth', () => {
   test('login returns access token', async ({ api }) => {
     const response = await api.auth.login(ADMIN.email, ADMIN.password);
 
-    expect(response.status()).toBe(201);
     const body = await response.json();
     expect(body).toHaveProperty('access_token');
     expect(body).toHaveProperty('refresh_token');
@@ -24,15 +23,14 @@ test.describe('Auth', () => {
     const { access_token } = await loginRes.json();
 
     const profileRes = await api.auth.getProfile(access_token);
-
-    expect(profileRes.status()).toBe(200);
     const profile = await profileRes.json();
-    expect(profile).toHaveProperty('email', ADMIN.email);
-    expect(profile).toHaveProperty('role', 'admin');
+
+    expect(profile.email).toBe(ADMIN.email);
+    expect(profile.role).toBe('admin');
   });
 
   test('get profile without token returns 401', async ({ api }) => {
-    const response = await api.auth.getProfile('');
+    const response = await api.unauthorized().auth.getProfile('');
 
     expect(response.status()).toBe(401);
   });

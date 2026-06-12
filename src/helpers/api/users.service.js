@@ -9,22 +9,22 @@ export class UsersService {
   async getAll() {
     const response = await this.request.get('users');
     const body = await response.json();
-    if (response.ok()) validate('getUsers', response.status(), body);
-    return { response, body };
+    if (response.ok()) body.forEach((u) => validate('User', u));
+    return { status: response.status(), body };
   }
 
   async getById(id) {
     const response = await this.request.get(`users/${id}`);
     const body = await response.json();
     if (response.ok()) validate('getUserById', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async create(data) {
     const response = await this.request.post('users', { data });
     const body = await response.json();
     if (response.ok()) validate('createUser', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async update(id, data) {
@@ -34,7 +34,7 @@ export class UsersService {
     });
     const body = await response.json();
     if (response.ok()) validate('updateUser', response.status(), body);
-    return { response, body };
+    return { status: response.status(), body };
   }
 
   async checkEmailAvailability(email) {
@@ -42,6 +42,6 @@ export class UsersService {
       data: { email },
     });
     const body = await response.json();
-    return { response, body };
+    return { status: response.status(), body };
   }
 }
