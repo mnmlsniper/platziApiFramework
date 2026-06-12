@@ -3,45 +3,42 @@ import { expect } from '@playwright/test';
 
 test.describe('Categories', () => {
   test('get all categories', async ({ api }) => {
-    const response = await api.categories.getAll();
+    const { response, body } = await api.categories.getAll();
 
     expect(response.status()).toBe(200);
-    const body = await response.json();
     expect(Array.isArray(body)).toBe(true);
   });
 
   test('get category by id', async ({ api }) => {
-    const response = await api.categories.getById(1);
+    const { response, body } = await api.categories.getById(1);
 
     expect(response.status()).toBe(200);
-    const category = await response.json();
-    expect(category).toHaveProperty('id', 1);
-    expect(category).toHaveProperty('name');
+    expect(body.id).toBe(1);
+    expect(body.name).toBeDefined();
   });
 
   test('get products by category', async ({ api }) => {
-    const response = await api.categories.getProductsByCategory(1);
+    const { response, body } = await api.categories.getProductsByCategory(1);
 
     expect(response.status()).toBe(200);
-    const products = await response.json();
-    expect(Array.isArray(products)).toBe(true);
+    expect(Array.isArray(body)).toBe(true);
   });
 
-  test('CRUD: create → update → delete category', async ({ api, token }) => {
-    const created = await api.categories.create(token, {
+  test('CRUD: create → update → delete category', async ({ api }) => {
+    const { response: createRes, body: category } = await api.categories.create({
       name: 'Test Category',
       image: 'https://placeimg.com/640/480/any',
     });
-    expect(created.status()).toBe(201);
-    const category = await created.json();
-    expect(category).toHaveProperty('id');
+    expect(createRes.status()).toBe(201);
+    expect(category.id).toBeDefined();
 
-    const updated = await api.categories.update(token, category.id, { name: 'Updated Category' });
-    expect(updated.status()).toBe(200);
-    const updatedCat = await updated.json();
-    expect(updatedCat.name).toBe('Updated Category');
+    const { response: updateRes, body: updated } = await api.categories.update(category.id, {
+      name: 'Updated Category',
+    });
+    expect(updateRes.status()).toBe(200);
+    expect(updated.name).toBe('Updated Category');
 
-    const deleted = await api.categories.delete(token, category.id);
-    expect(deleted.status()).toBe(200);
+    const { response: deleteRes } = await api.categories.delete(category.id);
+    expect(deleteRes.status()).toBe(200);
   });
 });

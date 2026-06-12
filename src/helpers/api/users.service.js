@@ -1,31 +1,47 @@
+import { validate } from '../validator.js';
+
 export class UsersService {
-  constructor(request) {
+  constructor({ request, token }) {
     this.request = request;
-    this.baseURL = 'https://api.escuelajs.co/api/v1';
+    this.token = token;
   }
 
   async getAll() {
-    return this.request.get(`${this.baseURL}/users`);
+    const response = await this.request.get('users');
+    const body = await response.json();
+    if (response.ok()) validate('getUsers', response.status(), body);
+    return { response, body };
   }
 
   async getById(id) {
-    return this.request.get(`${this.baseURL}/users/${id}`);
+    const response = await this.request.get(`users/${id}`);
+    const body = await response.json();
+    if (response.ok()) validate('getUserById', response.status(), body);
+    return { response, body };
   }
 
   async create(data) {
-    return this.request.post(`${this.baseURL}/users`, { data });
+    const response = await this.request.post('users', { data });
+    const body = await response.json();
+    if (response.ok()) validate('createUser', response.status(), body);
+    return { response, body };
   }
 
-  async update(token, id, data) {
-    return this.request.put(`${this.baseURL}/users/${id}`, {
+  async update(id, data) {
+    const response = await this.request.put(`users/${id}`, {
       data,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.token}` },
     });
+    const body = await response.json();
+    if (response.ok()) validate('updateUser', response.status(), body);
+    return { response, body };
   }
 
   async checkEmailAvailability(email) {
-    return this.request.post(`${this.baseURL}/users/is-available`, {
+    const response = await this.request.post('users/is-available', {
       data: { email },
     });
+    const body = await response.json();
+    return { response, body };
   }
 }

@@ -5,7 +5,7 @@ export default defineConfig({
   globalSetup: './src/global-setup.js',
   workers: 4,
   use: {
-    baseURL: 'https://api.escuelajs.co/api/v1',
+    baseURL: 'https://api.escuelajs.co/api/v1/',
     extraHTTPHeaders: {
       'Content-Type': 'application/json',
     },

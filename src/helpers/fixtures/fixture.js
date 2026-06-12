@@ -15,20 +15,13 @@ function readToken() {
 }
 
 export const test = base.extend({
-  api: async ({ playwright }, use) => {
+  api: async ({ playwright, baseURL }, use) => {
+    const { access_token } = readToken();
     const context = await playwright.request.newContext({
+      baseURL,
       ignoreHTTPSErrors: true,
     });
-    await use(new Api(context));
+    await use(new Api({ request: context, token: access_token }));
     await context.dispose();
-  },
-
-  token: async ({}, use) => {
-    const { access_token } = readToken();
-    await use(access_token);
-  },
-
-  tokens: async ({}, use) => {
-    await use(readToken());
   },
 });

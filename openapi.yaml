@@ -1,0 +1,252 @@
+openapi: 3.0.0
+info:
+  title: Platzi Fake Store API
+  version: 1.0.0
+
+paths:
+  /products:
+    get:
+      operationId: getProducts
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductList'
+    post:
+      operationId: createProduct
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /products/{id}:
+    get:
+      operationId: getProductById
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    put:
+      operationId: updateProduct
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    delete:
+      operationId: deleteProduct
+      responses:
+        '200':
+          description: Deleted successfully
+
+  /categories:
+    get:
+      operationId: getCategories
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryList'
+    post:
+      operationId: createCategory
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+  /categories/{id}:
+    get:
+      operationId: getCategoryById
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    put:
+      operationId: updateCategory
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+    delete:
+      operationId: deleteCategory
+      responses:
+        '200':
+          description: Deleted successfully
+
+  /categories/{id}/products:
+    get:
+      operationId: getProductsByCategory
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductList'
+
+  /users:
+    get:
+      operationId: getUsers
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+    post:
+      operationId: createUser
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      operationId: getUserById
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      operationId: updateUser
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /auth/login:
+    post:
+      operationId: login
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+
+  /auth/profile:
+    get:
+      operationId: getProfile
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+components:
+  schemas:
+
+    Category:
+      type: object
+      required: [id, name, slug, image, creationAt, updatedAt]
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        image:
+          type: string
+        creationAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CategoryList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Category'
+
+    Product:
+      type: object
+      required: [id, title, slug, price, description, category, images, creationAt, updatedAt]
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        slug:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        images:
+          type: array
+          items:
+            type: string
+        creationAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ProductList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Product'
+
+    User:
+      type: object
+      required: [id, name, email, role, avatar, creationAt, updatedAt]
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [admin, customer]
+        avatar:
+          type: string
+        creationAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UserList:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+
+    TokenPair:
+      type: object
+      required: [access_token, refresh_token]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string

@@ -1,44 +1,66 @@
+import { validate } from '../validator.js';
+
 export class ProductsService {
-  constructor(request) {
+  constructor({ request, token }) {
     this.request = request;
-    this.baseURL = 'https://api.escuelajs.co/api/v1';
+    this.token = token;
   }
 
   async getAll(params = {}) {
     const query = new URLSearchParams(params).toString();
-    const url = query ? `${this.baseURL}/products?${query}` : `${this.baseURL}/products`;
-    return this.request.get(url);
+    const url = query ? `products?${query}` : 'products';
+    const response = await this.request.get(url);
+    const body = await response.json();
+    if (response.ok()) validate('getProducts', response.status(), body);
+    return { response, body };
   }
 
   async getById(id) {
-    return this.request.get(`${this.baseURL}/products/${id}`);
+    const response = await this.request.get(`products/${id}`);
+    const body = await response.json();
+    if (response.ok()) validate('getProductById', response.status(), body);
+    return { response, body };
   }
 
-  async create(token, data) {
-    return this.request.post(`${this.baseURL}/products`, {
+  async create(data) {
+    const response = await this.request.post('products', {
       data,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.token}` },
     });
+    const body = await response.json();
+    if (response.ok()) validate('createProduct', response.status(), body);
+    return { response, body };
   }
 
-  async update(token, id, data) {
-    return this.request.put(`${this.baseURL}/products/${id}`, {
+  async update(id, data) {
+    const response = await this.request.put(`products/${id}`, {
       data,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.token}` },
     });
+    const body = await response.json();
+    if (response.ok()) validate('updateProduct', response.status(), body);
+    return { response, body };
   }
 
-  async delete(token, id) {
-    return this.request.delete(`${this.baseURL}/products/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
+  async delete(id) {
+    const response = await this.request.delete(`products/${id}`, {
+      headers: { Authorization: `Bearer ${this.token}` },
     });
+    const body = await response.json();
+    return { response, body };
   }
 
   async filterByTitle(title) {
-    return this.request.get(`${this.baseURL}/products/?title=${title}`);
+    const response = await this.request.get(`products/?title=${title}`);
+    const body = await response.json();
+    if (response.ok()) validate('getProducts', response.status(), body);
+    return { response, body };
   }
 
   async filterByPriceRange(min, max) {
-    return this.request.get(`${this.baseURL}/products/?price_min=${min}&price_max=${max}`);
+    const response = await this.request.get(`products/?price_min=${min}&price_max=${max}`);
+    const body = await response.json();
+    if (response.ok()) validate('getProducts', response.status(), body);
+    return { response, body };
   }
 }

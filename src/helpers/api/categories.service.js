@@ -1,38 +1,57 @@
+import { validate } from '../validator.js';
+
 export class CategoriesService {
-  constructor(request) {
+  constructor({ request, token }) {
     this.request = request;
-    this.baseURL = 'https://api.escuelajs.co/api/v1';
+    this.token = token;
   }
 
   async getAll() {
-    return this.request.get(`${this.baseURL}/categories`);
+    const response = await this.request.get('categories');
+    const body = await response.json();
+    if (response.ok()) validate('getCategories', response.status(), body);
+    return { response, body };
   }
 
   async getById(id) {
-    return this.request.get(`${this.baseURL}/categories/${id}`);
+    const response = await this.request.get(`categories/${id}`);
+    const body = await response.json();
+    if (response.ok()) validate('getCategoryById', response.status(), body);
+    return { response, body };
   }
 
-  async create(token, data) {
-    return this.request.post(`${this.baseURL}/categories`, {
+  async create(data) {
+    const response = await this.request.post('categories', {
       data,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.token}` },
     });
+    const body = await response.json();
+    if (response.ok()) validate('createCategory', response.status(), body);
+    return { response, body };
   }
 
-  async update(token, id, data) {
-    return this.request.put(`${this.baseURL}/categories/${id}`, {
+  async update(id, data) {
+    const response = await this.request.put(`categories/${id}`, {
       data,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${this.token}` },
     });
+    const body = await response.json();
+    if (response.ok()) validate('updateCategory', response.status(), body);
+    return { response, body };
   }
 
-  async delete(token, id) {
-    return this.request.delete(`${this.baseURL}/categories/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
+  async delete(id) {
+    const response = await this.request.delete(`categories/${id}`, {
+      headers: { Authorization: `Bearer ${this.token}` },
     });
+    const body = await response.json();
+    return { response, body };
   }
 
   async getProductsByCategory(id) {
-    return this.request.get(`${this.baseURL}/categories/${id}/products`);
+    const response = await this.request.get(`categories/${id}/products`);
+    const body = await response.json();
+    if (response.ok()) validate('getProductsByCategory', response.status(), body);
+    return { response, body };
   }
 }

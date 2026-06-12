@@ -6,12 +6,14 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const TOKEN_PATH = path.join(__dirname, '../.auth/token.json');
 
-export default async function globalSetup() {
+export default async function globalSetup(config) {
+  const { baseURL } = config.projects[0].use;
+
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const request = context.request;
 
-  const response = await request.post('https://api.escuelajs.co/api/v1/auth/login', {
+  const response = await request.post(`${baseURL}auth/login`, {
     data: {
       email: process.env.ADMIN_EMAIL || 'admin@mail.com',
       password: process.env.ADMIN_PASSWORD || 'admin123',

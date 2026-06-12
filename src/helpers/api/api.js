@@ -4,10 +4,11 @@ import { CategoriesService } from './categories.service.js';
 import { UsersService } from './users.service.js';
 
 export class Api {
-  constructor(request) {
-    this.auth = new AuthService(request);
-    this.products = new ProductsService(request);
-    this.categories = new CategoriesService(request);
-    this.users = new UsersService(request);
+  constructor({ request, token = null }) {
+    const params = { request, token };
+    this.auth = new AuthService(params);
+    this.products = new ProductsService(params);
+    this.categories = new CategoriesService(params);
+    this.users = new UsersService(params);
   }
 }

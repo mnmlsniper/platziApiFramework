@@ -1,23 +1,22 @@
 export class AuthService {
-  constructor(request) {
+  constructor({ request }) {
     this.request = request;
-    this.baseURL = 'https://api.escuelajs.co/api/v1';
   }
 
   async login(email, password) {
-    return this.request.post(`${this.baseURL}/auth/login`, {
+    return this.request.post('auth/login', {
       data: { email, password },
     });
   }
 
   async getProfile(token) {
-    return this.request.get(`${this.baseURL}/auth/profile`, {
+    return this.request.get('auth/profile', {
       headers: { Authorization: `Bearer ${token}` },
     });
   }
 
   async refreshToken(refreshToken) {
-    return this.request.post(`${this.baseURL}/auth/refresh-token`, {
+    return this.request.post('auth/refresh-token', {
       data: { refreshToken },
     });
   }
